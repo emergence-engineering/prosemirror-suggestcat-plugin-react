@@ -163,7 +163,7 @@ export const SuggestionOverlay: FC<{
               </div>
               <div
                 className={
-                  selectedButton === 0
+                  selectedButton === 1
                     ? "actionButton-selected"
                     : "actionButton"
                 }
