@@ -2,8 +2,8 @@
   "name": "prosemirror-suggestcat-plugin-react",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "rollup -c --bundleConfigAsCjs",
-    "dev": "rollup -c -w --bundleConfigAsCjs",
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
     "format": "eslint src --ext .ts --fix",
     "prepublishOnly": "npm run build && npm run lint",
     "version": "npm run format && git add -A src",
