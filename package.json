@@ -1,0 +1,32 @@
+{
+  "name": "prosemirror-suggestcat-plugin-react",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.es.js",
+  "dependencies": {
+    "eslint": "^8.45.0",
+    "eslint-plugin-import": "^2.26.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.9",
+    "@babel/preset-env": "^7.22.9",
+    "@babel/preset-react": "^7.22.5",
+    "@types/react": "^18.2.15",
+    "@typescript-eslint/eslint-plugin": "^5.59.11",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.0",
+    "rollup": "^2.79.1",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-typescript2": "^0.35.0",
+    "typescript": "^5.1.6"
+  }
+}
