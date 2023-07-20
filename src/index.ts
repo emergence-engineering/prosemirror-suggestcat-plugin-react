@@ -1,1 +1,1 @@
-export * from "./suggestcatPluginReact/TestButton"
+export * from "./plugin/ProsemirrorSuggestcatPluginReact";

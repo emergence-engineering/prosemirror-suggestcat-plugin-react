@@ -10,7 +10,8 @@
     "prefer-template": "warn",
     "no-plusplus": "off",
     "no-restricted-syntax": "off",
-    "prefer-destructuring": "warn"
+    "prefer-destructuring": "warn",
+    "emitWarning": 0
   },
   "env": {
     "browser": true

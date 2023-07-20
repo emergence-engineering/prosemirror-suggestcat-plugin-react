@@ -93,3 +93,7 @@ thumb
 sketch
 
 *.tgz
+
+### yalc ###
+
+.yalc
