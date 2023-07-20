@@ -1,12 +1,35 @@
 {
   "name": "prosemirror-suggestcat-plugin-react",
-  "version": "1.0.0",
   "scripts": {
-    "build": "rollup -c"
+    "prebuild": "rimraf dist",
+    "build": "rollup -c --bundleConfigAsCjs",
+    "dev": "rollup -c -w --bundleConfigAsCjs",
+    "format": "eslint src --ext .ts --fix",
+    "prepublishOnly": "npm run build && npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags",
+    "lint": "tsc --noEmit && eslint src --ext .ts",
+    "test": "jest",
+    "upgrade-interactive": "npm-check --update",
+    "publish:np": "np"
   },
+  "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.es.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emergence-engineering/prosemirror-suggestcat-plugin-react.git"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "author": "Emergence Engineering",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/emergence-engineering/prosemirror-suggestcat-plugin-react/issues"
+  },
+  "homepage": "https://github.com/emergence-engineering/prosemirror-suggestcat-plugin-react#readme",
   "dependencies": {
     "eslint": "^8.45.0",
     "eslint-plugin-import": "^2.26.0",
@@ -22,6 +45,7 @@
     "rollup-plugin-import-css": "^3.3.1"
   },
   "devDependencies": {
+    "np": "^8.0.4",
     "@babel/core": "^7.22.9",
     "@babel/preset-env": "^7.22.9",
     "@babel/preset-react": "^7.22.5",
