@@ -12,9 +12,9 @@
     overflow: scroll;
     scroll-behavior: smooth;
     flex-direction: column;
-
-
+    padding: 1rem;
 }
+
 .overLayContainer:focus {
     outline: none;
 }
@@ -30,6 +30,7 @@
     overflow: scroll;
     max-height: 15rem;
     scroll-behavior: smooth;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .buttons {
