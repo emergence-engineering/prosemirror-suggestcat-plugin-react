@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useRef,
   useState,
+  FocusEvent,
 } from "react";
 import { usePopper } from "react-popper";
 import { completePluginKey, Status } from "prosemirror-suggestcat-plugin";
@@ -22,8 +23,6 @@ export const SuggestionOverlay: FC<{
   );
   const [selectedButton, setSelectedButton] = useState(0);
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const overlayRef = useRef<HTMLDivElement | null>(null);
-  const buttonsRef = useRef<HTMLDivElement | null>(null);
 
   const { styles, attributes } = usePopper(domReference, popperElement, {
     placement: "bottom-start",
@@ -43,6 +42,7 @@ export const SuggestionOverlay: FC<{
       },
     ],
   });
+
   const accept = useCallback(() => {
     if (!editorView) {
       return;
@@ -57,12 +57,12 @@ export const SuggestionOverlay: FC<{
       );
     editorView.focus();
   }, [editorView]);
+
   const reject = useCallback(() => {
     if (!editorView) {
       return;
     }
     const state = completePluginKey.getState(editorView.state);
-    // editorView.dispatch(editorView.state.tr.setSelection());
     if (state?.status === "finished")
       editorView.dispatch(
         editorView.state.tr.setMeta(completePluginKey, {
@@ -72,6 +72,7 @@ export const SuggestionOverlay: FC<{
       );
     editorView.focus();
   }, [editorView]);
+
   const keydownHandler = useCallback(
     (e: KeyboardEvent) => {
       e.preventDefault();
@@ -95,12 +96,19 @@ export const SuggestionOverlay: FC<{
     },
     [selectedButton, accept, reject],
   );
+
   useEffect(() => {
-    if (!rootRef.current) return;
-    if (status === Status.finished) rootRef.current?.focus();
+    if (!rootRef.current) {
+      return;
+    }
+
+    if (status === Status.finished) {
+      rootRef.current?.focus();
+    }
   }, [rootRef, status]);
+
   const rootOnBlur = useCallback(
-    (event: FocusEvent) => {
+    (event: FocusEvent<HTMLDivElement>) => {
       if (
         rootRef.current &&
         (!event.relatedTarget ||
@@ -114,19 +122,17 @@ export const SuggestionOverlay: FC<{
   );
 
   useEffect(() => {
-    if (!overlayRef.current?.scrollTop || !overlayRef.current?.scrollHeight) {
+    const element = document.querySelector("#suggestion-overlay");
+    if (
+      typeof element?.scrollTop !== "number" ||
+      typeof element?.scrollHeight !== "number"
+    ) {
       return;
     }
-    // @ts-ignore
-    overlayRef.current.scrollTop = overlayRef.current.scrollHeight;
-    // @ts-ignore
-    overlayRef.current.scrollIntoViewIfNeeded(false);
+
+    element.scrollTop = element.scrollHeight;
   }, [content]);
-  useEffect(() => {
-    if (!buttonsRef.current) return;
-    // @ts-ignore
-    buttonsRef.current.scrollIntoViewIfNeeded(false);
-  }, [status]);
+
   return (
     <div
       id={"popper"}
@@ -141,14 +147,13 @@ export const SuggestionOverlay: FC<{
           ref={rootRef}
           onKeyDown={keydownHandler}
           tabIndex={0}
-          // @ts-ignore
           onBlur={rootOnBlur}
         >
-          <div className={"overlay"} id={"suggestion-overlay"} ref={overlayRef}>
+          <div className={"overlay"} id={"suggestion-overlay"}>
             {content}
           </div>
           {status === Status.finished && (
-            <div className={"buttons"} ref={buttonsRef}>
+            <div className="buttons">
               <div className="actionLabel">Actions</div>
               <div
                 className={
@@ -172,9 +177,6 @@ export const SuggestionOverlay: FC<{
                 <div className={"iconWrapper"}>{promptIcons.RejectIcon()}</div>
                 Reject
               </div>
-              {/*<ActionButton selected={selectedButton === 2}>*/}
-              {/*  Make it shorter*/}
-              {/*</ActionButton>*/}
             </div>
           )}
         </div>
