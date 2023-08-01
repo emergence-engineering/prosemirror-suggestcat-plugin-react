@@ -1,16 +1,22 @@
 import React, {
   FC,
+  FocusEvent,
   KeyboardEvent,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
-  FocusEvent,
 } from "react";
 import { usePopper } from "react-popper";
 import { completePluginKey, Status } from "prosemirror-suggestcat-plugin";
 import { EditorView } from "prosemirror-view";
 import { promptIcons } from "./promptIcons";
+import {
+  dispatchWithMeta,
+  SlashMenuKey,
+  SlashMetaTypes,
+} from "prosemirror-slash-menu";
 
 export const SuggestionOverlay: FC<{
   editorView: EditorView;
@@ -21,6 +27,27 @@ export const SuggestionOverlay: FC<{
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
     null,
   );
+  const [toolTipPopperElement, setToolTipPopperElement] =
+    useState<HTMLDivElement | null>(null);
+  const tooltipVirtualRef = useMemo(() => {
+    if (!editorView || !editorView?.state) {
+      return;
+    }
+
+    const currentNode = editorView.domAtPos(
+      editorView.state.selection.to,
+    )?.node;
+
+    if (!currentNode) {
+      return;
+    }
+
+    if (currentNode instanceof Text) {
+      return currentNode.parentElement;
+    }
+    return currentNode instanceof HTMLElement ? currentNode : undefined;
+  }, [editorView?.state, window.scrollY]);
+
   const [selectedButton, setSelectedButton] = useState(0);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
@@ -42,6 +69,28 @@ export const SuggestionOverlay: FC<{
       },
     ],
   });
+  const { styles: tooltipStyles, attributes: tooltipAttrs } = usePopper(
+    tooltipVirtualRef,
+    toolTipPopperElement,
+    {
+      placement: "left",
+      modifiers: [
+        { name: "flip", enabled: true },
+        {
+          name: "preventOverflow",
+          options: {
+            mainAxis: false,
+          },
+        },
+        {
+          name: "offset",
+          options: {
+            offset: [0, 20],
+          },
+        },
+      ],
+    },
+  );
 
   const accept = useCallback(() => {
     if (!editorView) {
@@ -120,7 +169,7 @@ export const SuggestionOverlay: FC<{
     },
     [rootRef, reject],
   );
-
+  console.log("inhere");
   useEffect(() => {
     const element = document.querySelector("#suggestion-overlay");
     if (
@@ -132,55 +181,101 @@ export const SuggestionOverlay: FC<{
 
     element.scrollTop = element.scrollHeight;
   }, [content]);
+  const suggestionState = useMemo(() => {
+    if (!editorView?.state) return;
+    return completePluginKey.getState(editorView?.state);
+  }, [editorView?.state]);
+  const shouldDisplay = useMemo(() => {
+    if (!editorView?.state) return false;
+    const slashMenuOpen = SlashMenuKey.getState(editorView?.state)?.open;
 
+    return (
+      editorView?.state?.selection.from !== editorView?.state?.selection.to &&
+      !slashMenuOpen &&
+      suggestionState?.status === Status.idle
+    );
+  }, [editorView?.state, suggestionState]);
+  const handleTooltipClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      if (!editorView) return;
+      dispatchWithMeta(editorView, SlashMenuKey, {
+        type: SlashMetaTypes.open,
+      });
+      return true;
+    },
+    [editorView],
+  );
+  useEffect(() => console.log({ shouldDisplay }), [shouldDisplay]);
   return (
-    <div
-      id={"popper"}
-      ref={setPopperElement}
-      className={"overlay-popper-element"}
-      style={styles.popper}
-      {...attributes.popper}
-    >
-      {(status === Status.streaming || status === Status.finished) && (
+    <>
+      {shouldDisplay && (
         <div
-          className={"overLayContainer"}
-          ref={rootRef}
-          onKeyDown={keydownHandler}
-          tabIndex={0}
-          onBlur={rootOnBlur}
+          id={"popper"}
+          ref={setToolTipPopperElement}
+          className={"ai-tooltip"}
+          style={{
+            ...tooltipStyles.popper,
+          }}
+          {...tooltipAttrs.popper}
+          onClick={handleTooltipClick}
         >
-          <div className={"overlay"} id={"suggestion-overlay"}>
-            {content}
-          </div>
-          {status === Status.finished && (
-            <div className="buttons">
-              <div className="actionLabel">Actions</div>
-              <div
-                className={
-                  selectedButton === 0
-                    ? "actionButton-selected"
-                    : "actionButton"
-                }
-                onClick={accept}
-              >
-                <div className={"iconWrapper"}>{promptIcons.AcceptIcon()}</div>
-                Accept
-              </div>
-              <div
-                className={
-                  selectedButton === 1
-                    ? "actionButton-selected"
-                    : "actionButton"
-                }
-                onClick={reject}
-              >
-                <div className={"iconWrapper"}>{promptIcons.RejectIcon()}</div>
-                Reject
-              </div>
-            </div>
-          )}
+          {promptIcons.StarIcon()}
+          <div className={"ai-tooltip"}>Ask AI</div>
         </div>
       )}
-    </div>
+      <div
+        id={"popper"}
+        ref={setPopperElement}
+        className={"overlay-popper-element"}
+        style={styles.popper}
+        {...attributes.popper}
+      >
+        {(status === Status.streaming || status === Status.finished) && (
+          <div
+            className={"overLayContainer"}
+            ref={rootRef}
+            onKeyDown={keydownHandler}
+            tabIndex={0}
+            onBlur={rootOnBlur}
+          >
+            <div className={"overlay"} id={"suggestion-overlay"}>
+              {content}
+            </div>
+            {status === Status.finished && (
+              <div className="buttons">
+                <div className="actionLabel">Actions</div>
+                <div
+                  className={
+                    selectedButton === 0
+                      ? "actionButton-selected"
+                      : "actionButton"
+                  }
+                  onClick={accept}
+                >
+                  <div className={"iconWrapper"}>
+                    {promptIcons.AcceptIcon()}
+                  </div>
+                  Accept
+                </div>
+                <div
+                  className={
+                    selectedButton === 1
+                      ? "actionButton-selected"
+                      : "actionButton"
+                  }
+                  onClick={reject}
+                >
+                  <div className={"iconWrapper"}>
+                    {promptIcons.RejectIcon()}
+                  </div>
+                  Reject
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </>
   );
 };

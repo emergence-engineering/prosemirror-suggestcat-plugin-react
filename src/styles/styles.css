@@ -78,3 +78,20 @@
 .actionButton:hover {
     background-color: #d2efff;
 }
+
+.ai-tooltip {
+    display: flex;
+    height: 36px;
+    align-items: center;
+    transition: 0.3s;
+}
+.ai-tooltip:hover {
+    background-color: #d2efff;
+}
+.ai-tooltip-label {
+    display: flex;
+    width: 60px;
+    align-items: center;
+    margin-left: 0.5rem;
+    font-weight: 600;
+}
