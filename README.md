@@ -8,7 +8,7 @@ Basic UI for [prosemirror-suggestcat-plugin](https://github.com/emergence-engine
 
 ## Features
 
-![feature-gif](https://suggestcat.com/suggestcatReact.gif)
+![feature-gif](https://suggestcat.com/basic-suggestr-eact-example.gif)
 
 - A slash menu to select and filter commands, implemented with[prosemirror-slash-menu-react](https://github.com/emergence-engineering/prosemirror-slash-menu-react)
 - A button over selection to open the menu
