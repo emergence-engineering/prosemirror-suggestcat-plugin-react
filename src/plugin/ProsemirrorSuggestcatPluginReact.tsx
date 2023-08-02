@@ -123,7 +123,6 @@ export const ProsemirrorSuggestcatPluginReact: FC<{
         <SlashMenuReact
           editorState={editorState}
           editorView={editorView}
-          // filterFieldIcon={promptIcons.StarIcon}
           filterPlaceHolder="Start writing a prompt or choose from below..."
           mainMenuLabel="Actions"
           popperReference={slashMenuDomReference}
