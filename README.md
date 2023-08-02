@@ -27,6 +27,7 @@ import { SlashMenuPlugin } from "prosemirror-slash-menu";
 import {
   promptCommands,
   ProsemirrorSuggestcatPluginReact,
+  slashOpeningCondition,
 } from "prosemirror-suggestcat-plugin-react";
 
 const Editor: FC = () => {
@@ -37,7 +38,9 @@ const Editor: FC = () => {
   useEffect(() => {
     const state = EditorState.create({
       doc: schema.nodeFromJSON(initialDoc),
-      plugins: [SlashMenuPlugin(promptCommands, undefined, undefined, true)],
+      plugins: [
+        SlashMenuPlugin(promptCommands, undefined, slashOpeningCondition, true),
+      ],
     });
     const view = new EditorView(document.querySelector("#editor"), {
       state,
@@ -95,10 +98,9 @@ const Editor: FC = () => {
 
 - `domReference` This is a [Popper `referenceObject` ](https://popper.js.org/docs/v1/#referenceobject) under which the menu and suggestion overlay will appear. In our example it's under the selected paragraph.
 - `editorView` prosemirror EditorView
-- `editorState` prosemirror EditorState  TODO Explain more in NOTE
+- `editorState` prosemirror EditorState TODO Explain more in NOTE
 
-NOTE: The editor state is passed in separately just so that the component re-renders on state change, in the component it is not used, you should always use `view.state` when you use `prosemirror` in your projects. 
-
+NOTE: The editor state is passed in separately just so that the component re-renders on state change, in the component it is not used, you should always use `view.state` when you use `prosemirror` in your projects.
 
 ### Styles
 
@@ -112,10 +114,10 @@ import "prosemirror-suggestcat-plugin-react/dist/styles/styles.css";
 
 Navigation is intuitive with keyboard using arrows, Tab, Enter,Esc etc. and also with clicks. The prompt menu is using [prosemirror-slash-menu-react](https://github.com/emergence-engineering/prosemirror-slash-menu-react), the exact behaviour is detailed in the Readme.
 
-### Customization 
+### Customization
 
-This package is not made with customization as a priority, it's intended to be a quick and easy way to use Suggestcat. 
+This package is not made with customization as a priority, it's intended to be a quick and easy way to use Suggestcat.
 With that in mind, with providing your own popper reference object and replacing our CSS classes,
-it is fairly simple to modify it to blend more into your app. 
-You could also pass your own commands into `SlashMenuPlugin` to replace or delete the icons, change the labels. 
+it is fairly simple to modify it to blend more into your app.
+You could also pass your own commands into `SlashMenuPlugin` to replace or delete the icons, change the labels.
 However, keep in mind that the actual command function needs to be the same to properly work together with [prosemirror-suggestcat-plugin](https://github.com/emergence-engineering/prosemirror-suggestcat-plugin)
