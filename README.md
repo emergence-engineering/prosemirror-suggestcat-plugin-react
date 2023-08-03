@@ -10,13 +10,13 @@ Basic UI for [prosemirror-suggestcat-plugin](https://github.com/emergence-engine
 
 ![feature-gif](https://suggestcat.com/basic-suggestr-eact-example.gif)
 
-- A slash menu to select and filter commands, implemented with[prosemirror-slash-menu-react](https://github.com/emergence-engineering/prosemirror-slash-menu-react)
+- A slash menu to select and filter commands, implemented with [prosemirror-slash-menu-react](https://github.com/emergence-engineering/prosemirror-slash-menu-react)
 - A button over selection to open the menu
 - An overlay to show/cancel/reject suggestions
 
 ## How to use?
 
-- Import `SlashMenuPlugin` from [`prosemirror-slash-menu`](https://github.com/emergence-engineering/prosemirror-slash-menu-react)
+- Import `SlashMenuPlugin` from [`prosemirror-slash-menu`](https://github.com/emergence-engineering/prosemirror-slash-menu)
 - Import `ProsemirrorSuggestcatPluginReact` and `promptCommands` from [`prosemirror-suggestcat-plugin-react`](https://github.com/emergence-engineering/prosemirror-suggestcat-plugin-react)
 - Add `SlashMenuPlugin` to your editor with `promptCommands`
 - Create dom reference
@@ -98,9 +98,7 @@ const Editor: FC = () => {
 
 - `domReference` This is a [Popper `referenceObject` ](https://popper.js.org/docs/v1/#referenceobject) under which the menu and suggestion overlay will appear. In our example it's under the selected paragraph.
 - `editorView` prosemirror EditorView
-- `editorState` prosemirror EditorState TODO Explain more in NOTE
-
-NOTE: The editor state is passed in separately just so that the component re-renders on state change, in the component it is not used, you should always use `view.state` when you use `prosemirror` in your projects.
+- `editorState` prosemirror EditorState
 
 ### Styles
 
@@ -112,7 +110,7 @@ import "prosemirror-suggestcat-plugin-react/dist/styles/styles.css";
 
 ### UI behaviour
 
-Navigation is intuitive with keyboard using arrows, Tab, Enter,Esc etc. and also with clicks. The prompt menu is using [prosemirror-slash-menu-react](https://github.com/emergence-engineering/prosemirror-slash-menu-react), the exact behaviour is detailed in the Readme.
+Navigation is intuitive with keyboard using arrows, Tab, Enter, Esc etc. and also with clicks. The prompt menu is using [prosemirror-slash-menu-react](https://github.com/emergence-engineering/prosemirror-slash-menu-react), the exact behaviour is detailed in the Readme.
 
 ### Customization
 
