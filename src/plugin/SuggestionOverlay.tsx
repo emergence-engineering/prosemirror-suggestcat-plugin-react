@@ -109,6 +109,7 @@ export const SuggestionOverlay: FC<{
 
         return true;
       }
+      return true;
     },
     [selectedButton, accept, reject],
   );
@@ -117,10 +118,7 @@ export const SuggestionOverlay: FC<{
     if (!rootRef.current) {
       return;
     }
-
-    if (status === Status.finished || status === Status.streaming) {
-      rootRef.current?.focus();
-    }
+    rootRef.current?.focus();
   }, [rootRef, status]);
 
   const rootOnBlur = useCallback(
@@ -162,13 +160,24 @@ export const SuggestionOverlay: FC<{
       style={styles.popper}
       {...attributes.popper}
     >
+      {status === Status.new && (
+        <div
+          className={"overLayContainer"}
+          ref={rootRef}
+          tabIndex={0}
+          onBlur={rootOnBlur}
+          onKeyDown={keydownHandler}
+        >
+          <div className={"lds-dual-ring"}></div>
+        </div>
+      )}
       {(status === Status.streaming || status === Status.finished) && (
         <div
           className={"overLayContainer"}
           ref={rootRef}
-          onKeyDown={keydownHandler}
           tabIndex={0}
           onBlur={rootOnBlur}
+          onKeyDown={keydownHandler}
         >
           <div className={"overlay"} id={"suggestion-overlay"}>
             {!!content?.length && (
