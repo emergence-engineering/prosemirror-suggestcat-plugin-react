@@ -73,6 +73,18 @@ export const SuggestionOverlay: FC<{
     editorView.focus();
   }, [editorView]);
 
+  const cancel = useCallback(() => {
+    if (!editorView) {
+      return;
+    }
+    editorView.dispatch(
+      editorView.state.tr.setMeta(completePluginKey, {
+        status: Status.cancelled,
+      }),
+    );
+    editorView.focus();
+  }, [editorView]);
+
   const keydownHandler = useCallback(
     (e: KeyboardEvent) => {
       e.preventDefault();
@@ -90,7 +102,11 @@ export const SuggestionOverlay: FC<{
           return true;
         }
       } else if (e.key === "Escape") {
-        reject();
+        completePluginKey.getState(editorView.state)?.status ===
+        Status.streaming
+          ? cancel()
+          : reject();
+
         return true;
       }
     },
@@ -102,7 +118,7 @@ export const SuggestionOverlay: FC<{
       return;
     }
 
-    if (status === Status.finished) {
+    if (status === Status.finished || status === Status.streaming) {
       rootRef.current?.focus();
     }
   }, [rootRef, status]);
@@ -110,6 +126,11 @@ export const SuggestionOverlay: FC<{
   const rootOnBlur = useCallback(
     (event: FocusEvent<HTMLDivElement>) => {
       if (
+        completePluginKey.getState(editorView.state)?.status ===
+        Status.streaming
+      ) {
+        cancel();
+      } else if (
         rootRef.current &&
         (!event.relatedTarget ||
           !(event.relatedTarget instanceof Node) ||
@@ -150,6 +171,9 @@ export const SuggestionOverlay: FC<{
           onBlur={rootOnBlur}
         >
           <div className={"overlay"} id={"suggestion-overlay"}>
+            {!!content?.length && (
+              <span className={"close"} onClick={cancel}></span>
+            )}
             {content}
           </div>
           {status === Status.finished && (
