@@ -21,6 +21,7 @@ export const SuggestionOverlay: FC<{
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
     null,
   );
+  console.log("open");
   const [selectedButton, setSelectedButton] = useState(0);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
@@ -168,7 +169,7 @@ export const SuggestionOverlay: FC<{
           onBlur={rootOnBlur}
           onKeyDown={keydownHandler}
         >
-          <div className={"lds-dual-ring"}></div>
+          <div className={"loader"}></div>
         </div>
       )}
       {(status === Status.streaming || status === Status.finished) && (
