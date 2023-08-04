@@ -21,7 +21,6 @@ export const SuggestionOverlay: FC<{
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
     null,
   );
-  console.log("open");
   const [selectedButton, setSelectedButton] = useState(0);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
