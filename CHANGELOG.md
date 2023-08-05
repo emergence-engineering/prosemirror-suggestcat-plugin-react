@@ -1,5 +1,15 @@
 # prosemirror-suggestcat-plugin-react
 
+## 0.0.13
+
+### Patch Changes
+
+- remove preinstall
+- Updated dependencies
+  - prosemirror-slash-menu@0.1.7
+  - prosemirror-slash-menu-react@0.0.10
+  - prosemirror-suggestcat-plugin@0.1.7
+
 ## 0.0.12
 
 ### Patch Changes
