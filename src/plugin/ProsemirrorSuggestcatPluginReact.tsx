@@ -15,8 +15,27 @@ import { usePopper } from "react-popper";
 export const ProsemirrorSuggestcatPluginReact: FC<{
   editorView: EditorView;
   editorState: EditorState;
-  domReference: HTMLElement;
+  domReference?: HTMLElement;
 }> = ({ editorView, editorState, domReference }) => {
+  const slashMenuPopperRef = useMemo(() => {
+    if (!editorView || !editorView?.state) {
+      return;
+    }
+
+    const currentNode = editorView.domAtPos(editorView.state.selection.to)
+      ?.node;
+
+    if (!currentNode) {
+      return;
+    }
+
+    if (currentNode instanceof Text) {
+      return currentNode.parentElement;
+    }
+
+    return currentNode instanceof HTMLElement ? currentNode : undefined;
+  }, [editorView?.state?.selection, window.scrollY]);
+
   const [toolTipPopperElement, setToolTipPopperElement] =
     useState<HTMLDivElement | null>(null);
   const suggestionState = useMemo(() => {
@@ -32,9 +51,8 @@ export const ProsemirrorSuggestcatPluginReact: FC<{
       return;
     }
 
-    const currentNode = editorView.domAtPos(
-      editorView.state.selection.to,
-    )?.node;
+    const currentNode = editorView.domAtPos(editorView.state.selection.to)
+      ?.node;
 
     if (!currentNode) {
       return;
@@ -116,7 +134,7 @@ export const ProsemirrorSuggestcatPluginReact: FC<{
             <SuggestionOverlay
               editorView={editorView}
               status={suggestionState?.status}
-              domReference={domReference}
+              domReference={domReference || slashMenuPopperRef}
               content={suggestionState?.result}
             />
           )}
