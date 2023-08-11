@@ -15,7 +15,7 @@ import { promptIcons } from "./promptIcons";
 export const SuggestionOverlay: FC<{
   editorView: EditorView;
   status: Status | undefined;
-  domReference: HTMLElement;
+  domReference: HTMLElement | null | undefined;
   content: string | undefined;
 }> = ({ status, domReference, content, editorView }) => {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
