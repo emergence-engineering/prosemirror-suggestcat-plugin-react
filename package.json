@@ -1,6 +1,6 @@
 {
   "name": "prosemirror-suggestcat-plugin-react",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -39,7 +39,7 @@
     "prosemirror-slash-menu": "^0.1.7",
     "prosemirror-slash-menu-react": "^0.0.10",
     "prosemirror-state": "^1.4.3",
-    "prosemirror-suggestcat-plugin": "^0.1.7",
+    "prosemirror-suggestcat-plugin": "^0.1.8",
     "prosemirror-view": "^1.31.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
