@@ -1,5 +1,13 @@
 # prosemirror-suggestcat-plugin-react
 
+## 0.0.16
+
+### Patch Changes
+
+- recover from detached head
+- Updated dependencies
+  - prosemirror-suggestcat-plugin@0.1.10
+
 ## 0.0.15
 
 ### Patch Changes
