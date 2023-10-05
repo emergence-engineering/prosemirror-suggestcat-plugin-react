@@ -1,5 +1,13 @@
 # prosemirror-suggestcat-plugin-react
 
+## 0.0.18
+
+### Patch Changes
+
+- upgrade fast-diff-merge and prosemirror-text-map
+- Updated dependencies
+  - prosemirror-suggestcat-plugin@0.1.13
+
 ## 0.0.17
 
 ### Patch Changes
