@@ -1,5 +1,13 @@
 # prosemirror-suggestcat-plugin-react
 
+## 0.0.19
+
+### Patch Changes
+
+- getTextWithNewlines update
+- Updated dependencies
+  - prosemirror-suggestcat-plugin@0.1.14
+
 ## 0.0.18
 
 ### Patch Changes
