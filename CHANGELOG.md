@@ -1,5 +1,13 @@
 # prosemirror-suggestcat-plugin-react
 
+## 0.0.20
+
+### Patch Changes
+
+- fix apply remove suggestion
+- Updated dependencies
+  - prosemirror-suggestcat-plugin@0.1.15
+
 ## 0.0.19
 
 ### Patch Changes
