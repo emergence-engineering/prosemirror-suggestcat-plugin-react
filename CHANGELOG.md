@@ -1,5 +1,15 @@
 # prosemirror-suggestcat-plugin-react
 
+## 0.0.21
+
+### Patch Changes
+
+- package upgrade
+- Updated dependencies
+  - prosemirror-slash-menu@0.1.9
+  - prosemirror-slash-menu-react@0.0.12
+  - prosemirror-suggestcat-plugin@1.1.1
+
 ## 0.0.20
 
 ### Patch Changes
