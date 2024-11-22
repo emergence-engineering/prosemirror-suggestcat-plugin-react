@@ -1,6 +1,6 @@
 {
   "name": "prosemirror-suggestcat-plugin-react",
-  "version": "0.0.21",
+  "version": "0.1.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
