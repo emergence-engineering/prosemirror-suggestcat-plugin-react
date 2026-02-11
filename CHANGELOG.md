@@ -1,5 +1,16 @@
 # prosemirror-suggestcat-plugin-react
 
+## 2.0.0
+
+### Major Changes
+
+- V2 implementation, block runner, autocomplete, model support, fallback logic.
+
+### Patch Changes
+
+- Updated dependencies
+  - prosemirror-suggestcat-plugin@2.0.0
+
 ## 0.2.0
 
 ### Minor Changes
