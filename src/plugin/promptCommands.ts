@@ -1,29 +1,21 @@
 import { CommandItem, SubMenu } from "prosemirror-slash-menu";
 import {
-  completePluginKey,
-  MoodParams,
+  startTask,
   MoodParamType,
-  OpenAiPromptsWithoutParam,
-  OpenAiPromptsWithParam,
-  TranslationParams,
+  AiPromptsWithoutParam,
+  AiPromptsWithParam,
   TranslationTargetLanguage,
 } from "prosemirror-suggestcat-plugin";
 import { PromptIcons } from "./promptIcons";
 
-//Commands
+// Commands using completeV2 startTask action
 
 const Complete: CommandItem = {
   id: PromptIcons.Complete,
   label: "Complete",
   type: "command",
   command: (view) => {
-    view.dispatch(
-      view.state.tr.setMeta(completePluginKey, {
-        type: OpenAiPromptsWithoutParam.Complete,
-        status: "new",
-      }),
-    );
-
+    startTask(view, AiPromptsWithoutParam.Complete);
     return true;
   },
   available: () => true,
@@ -34,13 +26,7 @@ const MakeItShorter: CommandItem = {
   label: "Make it shorter",
   type: "command",
   command: (view) => {
-    view.dispatch(
-      view.state.tr.setMeta(completePluginKey, {
-        type: OpenAiPromptsWithoutParam.MakeShorter,
-        status: "new",
-      }),
-    );
-
+    startTask(view, AiPromptsWithoutParam.MakeShorter);
     return true;
   },
   available: () => true,
@@ -51,13 +37,7 @@ const MakeItLonger: CommandItem = {
   label: "Make it longer",
   type: "command",
   command: (view) => {
-    view.dispatch(
-      view.state.tr.setMeta(completePluginKey, {
-        type: OpenAiPromptsWithoutParam.MakeLonger,
-        status: "new",
-      }),
-    );
-
+    startTask(view, AiPromptsWithoutParam.MakeLonger);
     return true;
   },
   available: () => true,
@@ -68,13 +48,7 @@ const Explain: CommandItem = {
   label: "Explain",
   type: "command",
   command: (view) => {
-    view.dispatch(
-      view.state.tr.setMeta(completePluginKey, {
-        type: OpenAiPromptsWithoutParam.Explain,
-        status: "new",
-      }),
-    );
-
+    startTask(view, AiPromptsWithoutParam.Explain);
     return true;
   },
   available: () => true,
@@ -85,13 +59,7 @@ const Simplify: CommandItem = {
   label: "Simplify",
   type: "command",
   command: (view) => {
-    view.dispatch(
-      view.state.tr.setMeta(completePluginKey, {
-        type: OpenAiPromptsWithoutParam.Simplify,
-        status: "new",
-      }),
-    );
-
+    startTask(view, AiPromptsWithoutParam.Simplify);
     return true;
   },
   available: () => true,
@@ -102,17 +70,12 @@ const ActionItems: CommandItem = {
   label: "Action items",
   type: "command",
   command: (view) => {
-    view.dispatch(
-      view.state.tr.setMeta(completePluginKey, {
-        type: OpenAiPromptsWithoutParam.ActionItems,
-        status: "new",
-      }),
-    );
-
+    startTask(view, AiPromptsWithoutParam.ActionItems);
     return true;
   },
   available: () => true,
 };
+
 const getTranslations = () => {
   const keys = Object.keys(
     TranslationTargetLanguage,
@@ -125,16 +88,9 @@ const getTranslations = () => {
       label: TranslationTargetLanguage[key],
       type: "command",
       command: (view) => {
-        view.dispatch(
-          view.state.tr.setMeta(completePluginKey, {
-            type: OpenAiPromptsWithParam.Translate,
-            params: {
-              targetLanguage: TranslationTargetLanguage[key],
-            } as TranslationParams,
-            status: "new",
-          }),
-        );
-
+        startTask(view, AiPromptsWithParam.Translate, {
+          targetLanguage: TranslationTargetLanguage[key],
+        });
         return true;
       },
       available: () => true,
@@ -142,7 +98,7 @@ const getTranslations = () => {
   });
 };
 
-//Submenus
+// Submenus
 const Translate: SubMenu = {
   id: PromptIcons.Translate,
   label: "Translate",
@@ -156,77 +112,53 @@ const ToCasual: CommandItem = {
   label: "Casual",
   type: "command",
   command: (view) => {
-    view.dispatch(
-      view.state.tr.setMeta(completePluginKey, {
-        type: OpenAiPromptsWithParam.ChangeTone,
-        params: {
-          mood: MoodParamType.Casual,
-        } as MoodParams,
-        status: "new",
-      }),
-    );
-
+    startTask(view, AiPromptsWithParam.ChangeTone, {
+      mood: MoodParamType.Casual,
+    });
     return true;
   },
   available: () => true,
 };
+
 const ToConfident: CommandItem = {
   id: "ToConfident",
   label: "Confident",
   type: "command",
   command: (view) => {
-    view.dispatch(
-      view.state.tr.setMeta(completePluginKey, {
-        type: OpenAiPromptsWithParam.ChangeTone,
-        params: {
-          mood: MoodParamType.Confident,
-        } as MoodParams,
-        status: "new",
-      }),
-    );
-
+    startTask(view, AiPromptsWithParam.ChangeTone, {
+      mood: MoodParamType.Confident,
+    });
     return true;
   },
   available: () => true,
 };
+
 const ToFriendly: CommandItem = {
   id: "ToFriendly",
   label: "Friendly",
   type: "command",
   command: (view) => {
-    view.dispatch(
-      view.state.tr.setMeta(completePluginKey, {
-        type: OpenAiPromptsWithParam.ChangeTone,
-        params: {
-          mood: MoodParamType.Friendly,
-        } as MoodParams,
-        status: "new",
-      }),
-    );
-
+    startTask(view, AiPromptsWithParam.ChangeTone, {
+      mood: MoodParamType.Friendly,
+    });
     return true;
   },
   available: () => true,
 };
+
 const ToStraightForward: CommandItem = {
   id: "ToStraightForward",
   label: "StraightForward",
   type: "command",
   command: (view) => {
-    view.dispatch(
-      view.state.tr.setMeta(completePluginKey, {
-        type: OpenAiPromptsWithParam.ChangeTone,
-        params: {
-          mood: MoodParamType.Straightforward,
-        } as MoodParams,
-        status: "new",
-      }),
-    );
-
+    startTask(view, AiPromptsWithParam.ChangeTone, {
+      mood: MoodParamType.Straightforward,
+    });
     return true;
   },
   available: () => true,
 };
+
 const ChangeTone: SubMenu = {
   id: PromptIcons.ChangeTone,
   label: "Change tone",

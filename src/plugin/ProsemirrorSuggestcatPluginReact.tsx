@@ -4,7 +4,7 @@ import { EditorView } from "prosemirror-view";
 import { EditorState } from "prosemirror-state";
 import { promptIcons, PromptIcons } from "./promptIcons";
 import { SuggestionOverlay } from "./SuggestionOverlay";
-import { completePluginKey, Status } from "prosemirror-suggestcat-plugin";
+import { completeV2Key, CompleteStatus } from "prosemirror-suggestcat-plugin";
 import {
   dispatchWithMeta,
   SlashMenuKey,
@@ -40,7 +40,7 @@ export const ProsemirrorSuggestcatPluginReact: FC<{
     useState<HTMLDivElement | null>(null);
   const suggestionState = useMemo(() => {
     if (!editorView?.state) return;
-    return completePluginKey.getState(editorView?.state);
+    return completeV2Key.getState(editorView?.state);
   }, [editorView?.state]);
 
   const overlayElement = useMemo(() => {
@@ -51,18 +51,30 @@ export const ProsemirrorSuggestcatPluginReact: FC<{
       return;
     }
 
-    const currentNode = editorView.domAtPos(editorView.state.selection.to)
-      ?.node;
+    const selection = editorView.state.selection;
+    // Use selection.from for vertical positioning (start of selection)
+    const coords = editorView.coordsAtPos(selection.from);
+    // Use editor's left edge for horizontal positioning
+    const editorRect = editorView.dom.getBoundingClientRect();
 
-    if (!currentNode) {
-      return;
-    }
-
-    if (currentNode instanceof Text) {
-      return currentNode.parentElement;
-    }
-    return currentNode instanceof HTMLElement ? currentNode : undefined;
-  }, [editorView?.state, window.scrollY]);
+    return {
+      getBoundingClientRect() {
+        return {
+          top: coords.top,
+          right: editorRect.left,
+          bottom: coords.bottom,
+          left: editorRect.left,
+          width: 0,
+          height: coords.bottom - coords.top,
+          x: editorRect.left,
+          y: coords.top,
+          toJSON() {
+            return JSON.stringify(this);
+          },
+        };
+      },
+    };
+  }, [editorView?.state?.selection, window.scrollY]);
 
   const slashMenuDomReference = useMemo(() => {
     return overlayElement || domReference;
@@ -74,7 +86,7 @@ export const ProsemirrorSuggestcatPluginReact: FC<{
     return (
       editorView?.state?.selection.from !== editorView?.state?.selection.to &&
       !slashMenuOpen &&
-      suggestionState?.status === Status.idle
+      suggestionState?.status === CompleteStatus.IDLE
     );
   }, [editorView?.state, suggestionState]);
   const handleTooltipClick = useCallback(
@@ -104,7 +116,7 @@ export const ProsemirrorSuggestcatPluginReact: FC<{
         {
           name: "offset",
           options: {
-            offset: [0, 20],
+            offset: [0, 36],
           },
         },
       ],
@@ -129,19 +141,19 @@ export const ProsemirrorSuggestcatPluginReact: FC<{
           </div>
         )}
 
-        {suggestionState?.status !== Status.idle &&
-          suggestionState?.status !== Status.done && (
-            <SuggestionOverlay
-              editorView={editorView}
-              status={suggestionState?.status}
-              domReference={domReference || slashMenuPopperRef}
-              content={suggestionState?.result}
-            />
-          )}
+        {suggestionState?.status !== CompleteStatus.IDLE && (
+          <SuggestionOverlay
+            editorView={editorView}
+            status={suggestionState?.status}
+            domReference={domReference || slashMenuPopperRef}
+            content={suggestionState?.streamedResult}
+          />
+        )}
         <SlashMenuReact
           editorState={editorState}
           editorView={editorView}
           filterPlaceHolder="Start writing a prompt or choose from below..."
+          disableInput
           mainMenuLabel="Actions"
           popperReference={slashMenuDomReference}
           icons={{

@@ -8,13 +8,19 @@ import React, {
   useState,
 } from "react";
 import { usePopper } from "react-popper";
-import { completePluginKey, Status } from "prosemirror-suggestcat-plugin";
+import {
+  completeV2Key,
+  CompleteStatus,
+  acceptResult,
+  rejectResult,
+  cancelTask,
+} from "prosemirror-suggestcat-plugin";
 import { EditorView } from "prosemirror-view";
 import { promptIcons } from "./promptIcons";
 
 export const SuggestionOverlay: FC<{
   editorView: EditorView;
-  status: Status | undefined;
+  status: CompleteStatus | undefined;
   domReference: HTMLElement | null | undefined;
   content: string | undefined;
 }> = ({ status, domReference, content, editorView }) => {
@@ -47,14 +53,7 @@ export const SuggestionOverlay: FC<{
     if (!editorView) {
       return;
     }
-    const state = completePluginKey.getState(editorView.state);
-    if (state?.status === Status.finished)
-      editorView.dispatch(
-        editorView.state.tr.setMeta(completePluginKey, {
-          type: state.type,
-          status: Status.accepted,
-        }),
-      );
+    acceptResult(editorView);
     editorView.focus();
   }, [editorView]);
 
@@ -62,14 +61,7 @@ export const SuggestionOverlay: FC<{
     if (!editorView) {
       return;
     }
-    const state = completePluginKey.getState(editorView.state);
-    if (state?.status === "finished")
-      editorView.dispatch(
-        editorView.state.tr.setMeta(completePluginKey, {
-          type: state.type,
-          status: Status.rejected,
-        }),
-      );
+    rejectResult(editorView);
     editorView.focus();
   }, [editorView]);
 
@@ -77,11 +69,7 @@ export const SuggestionOverlay: FC<{
     if (!editorView) {
       return;
     }
-    editorView.dispatch(
-      editorView.state.tr.setMeta(completePluginKey, {
-        status: Status.cancelled,
-      }),
-    );
+    cancelTask(editorView);
     editorView.focus();
   }, [editorView]);
 
@@ -102,8 +90,8 @@ export const SuggestionOverlay: FC<{
           return true;
         }
       } else if (e.key === "Escape") {
-        completePluginKey.getState(editorView.state)?.status ===
-        Status.streaming
+        completeV2Key.getState(editorView.state)?.status ===
+        CompleteStatus.STREAMING
           ? cancel()
           : reject();
 
@@ -124,8 +112,8 @@ export const SuggestionOverlay: FC<{
   const rootOnBlur = useCallback(
     (event: FocusEvent<HTMLDivElement>) => {
       if (
-        completePluginKey.getState(editorView.state)?.status ===
-        Status.streaming
+        completeV2Key.getState(editorView.state)?.status ===
+        CompleteStatus.STREAMING
       ) {
         cancel();
       } else if (
@@ -160,7 +148,7 @@ export const SuggestionOverlay: FC<{
       style={styles.popper}
       {...attributes.popper}
     >
-      {status === Status.new && (
+      {status === CompleteStatus.PENDING && (
         <div
           className={"overLayContainer"}
           ref={rootRef}
@@ -171,7 +159,7 @@ export const SuggestionOverlay: FC<{
           <div className={"loader"}></div>
         </div>
       )}
-      {(status === Status.streaming || status === Status.finished) && (
+      {(status === CompleteStatus.STREAMING || status === CompleteStatus.PREVIEW) && (
         <div
           className={"overLayContainer"}
           ref={rootRef}
@@ -185,7 +173,7 @@ export const SuggestionOverlay: FC<{
             )}
             {content}
           </div>
-          {status === Status.finished && (
+          {status === CompleteStatus.PREVIEW && (
             <div className="buttons">
               <div className="actionLabel">Actions</div>
               <div

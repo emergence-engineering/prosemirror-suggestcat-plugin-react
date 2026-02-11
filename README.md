@@ -1,45 +1,45 @@
-# prosemirror-suggestcat-plugin
+# prosemirror-suggestcat-plugin-react
 
 [![made by Emergence Engineering](https://emergence-engineering.com/ee-logo.svg)](https://emergence-engineering.com)
 
 [**Made by Emergence-Engineering**](https://emergence-engineering.com/)
 
-Basic UI for [prosemirror-suggestcat-plugin](https://github.com/emergence-engineering/prosemirror-suggestcat-plugin) in React.
+React UI for [prosemirror-suggestcat-plugin](https://github.com/emergence-engineering/prosemirror-suggestcat-plugin).
 
 ## Features
 
 ![feature-gif](https://suggestcat.com/basic-suggestr-eact-example.gif)
 
-- A slash menu to select and filter commands, implemented with [prosemirror-slash-menu-react](https://github.com/emergence-engineering/prosemirror-slash-menu-react)
-- A button over selection to open the menu
-- An overlay to show/cancel/reject suggestions
+- A slash menu to select and filter AI commands, implemented with [prosemirror-slash-menu-react](https://github.com/emergence-engineering/prosemirror-slash-menu-react)
+- An "Ask AI" tooltip that appears when text is selected
+- A suggestion overlay to show streaming results and accept/reject them
 
 ## How to use?
 
 - Import `SlashMenuPlugin` from [`prosemirror-slash-menu`](https://github.com/emergence-engineering/prosemirror-slash-menu)
-- Import `ProsemirrorSuggestcatPluginReact` and `promptCommands` from [`prosemirror-suggestcat-plugin-react`](https://github.com/emergence-engineering/prosemirror-suggestcat-plugin-react)
-- Add `SlashMenuPlugin` to your editor with `promptCommands`
-- Create dom reference
-- Add component next to your editor div
+- Import `ProsemirrorSuggestcatPluginReact` and `promptCommands` from this package
+- Add `SlashMenuPlugin` and `completePluginV2` to your editor
+- Add the component next to your editor div
 
 ```tsx
 import { SlashMenuPlugin } from "prosemirror-slash-menu";
+import { completePluginV2 } from "prosemirror-suggestcat-plugin";
 import {
   promptCommands,
   ProsemirrorSuggestcatPluginReact,
-  slashOpeningCondition,
 } from "prosemirror-suggestcat-plugin-react";
 
 const Editor: FC = () => {
-  // Needed for re-renders on every tr.
   const [editorState, setEditorState] = useState<EditorState>();
   const [editorView, setEditorView] = useState<EditorView>();
   const editorRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const state = EditorState.create({
       doc: schema.nodeFromJSON(initialDoc),
       plugins: [
-        SlashMenuPlugin(promptCommands, undefined, slashOpeningCondition, true),
+        completePluginV2("<YOUR_API_KEY>"),
+        SlashMenuPlugin(promptCommands, undefined, undefined, false, true),
       ],
     });
     const view = new EditorView(document.querySelector("#editor"), {
@@ -59,34 +59,13 @@ const Editor: FC = () => {
     };
   }, [editorRef]);
 
-  const slashMenuPopperRef = useMemo(() => {
-    if (!editorView || !editorView?.state) {
-      return;
-    }
-
-    const currentNode = editorView.domAtPos(
-      editorView.state.selection.to,
-    )?.node;
-
-    if (!currentNode) {
-      return;
-    }
-
-    if (currentNode instanceof Text) {
-      return currentNode.parentElement;
-    }
-
-    return currentNode instanceof HTMLElement ? currentNode : undefined;
-  }, [editorView?.state?.selection, window.scrollY]);
-
   return (
     <Root>
       <StyledEditor id="editor" ref={editorRef} />
-      {editorView && editorView?.state && slashMenuPopperRef && (
+      {editorView && editorView?.state && (
         <ProsemirrorSuggestcatPluginReact
           editorView={editorView}
-          editorState={editorView?.state}
-          domReference={slashMenuPopperRef}
+          editorState={editorView.state}
         />
       )}
     </Root>
@@ -96,13 +75,11 @@ const Editor: FC = () => {
 
 ### Props
 
-- `domReference` This is a [Popper `referenceObject` ](https://popper.js.org/docs/v1/#referenceobject) under which the menu and suggestion overlay will appear. In our example it's under the selected paragraph.
-- `editorView` prosemirror EditorView
-- `editorState` prosemirror EditorState
+- `editorView` — ProseMirror EditorView
+- `editorState` — ProseMirror EditorState
+- `domReference` — optional HTMLElement for Popper positioning (defaults to the current selection node)
 
 ### Styles
-
-- Import the `styles` from the package
 
 ```typescript
 import "prosemirror-suggestcat-plugin-react/dist/styles/styles.css";
@@ -110,12 +87,14 @@ import "prosemirror-suggestcat-plugin-react/dist/styles/styles.css";
 
 ### UI behaviour
 
-Navigation is intuitive with keyboard using arrows, Tab, Enter, Esc etc. and also with clicks. The prompt menu is using [prosemirror-slash-menu-react](https://github.com/emergence-engineering/prosemirror-slash-menu-react), the exact behaviour is detailed in the Readme.
+Navigation works with keyboard (arrows, Tab, Enter, Escape) and mouse clicks. The slash menu is powered by [prosemirror-slash-menu-react](https://github.com/emergence-engineering/prosemirror-slash-menu-react).
 
 ### Customization
 
-This package is not made with customization as a priority, it's intended to be a quick and easy way to use Suggestcat.
-With that in mind, with providing your own popper reference object and replacing our CSS classes,
-it is fairly simple to modify it to blend more into your app.
-You could also pass your own commands into `SlashMenuPlugin` to replace or delete the icons, change the labels.
-However, keep in mind that the actual command function needs to be the same to properly work together with [prosemirror-suggestcat-plugin](https://github.com/emergence-engineering/prosemirror-suggestcat-plugin)
+This package is intended as a quick way to get a working UI. You can customize it by:
+
+- Providing your own `domReference` for positioning
+- Overriding the CSS classes
+- Passing your own commands into `SlashMenuPlugin` to change labels or icons
+
+The command functions themselves must stay the same to work with [prosemirror-suggestcat-plugin](https://github.com/emergence-engineering/prosemirror-suggestcat-plugin).
