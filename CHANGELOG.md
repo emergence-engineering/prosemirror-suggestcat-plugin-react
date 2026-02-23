@@ -1,5 +1,16 @@
 # prosemirror-suggestcat-plugin-react
 
+## 2.2.0
+
+### Minor Changes
+
+- better fallback, better popup
+
+### Patch Changes
+
+- Updated dependencies
+  - prosemirror-suggestcat-plugin@2.2.0
+
 ## 2.0.1
 
 ### Patch Changes
