@@ -13,6 +13,7 @@ React UI for [prosemirror-suggestcat-plugin](https://github.com/emergence-engine
 - A slash menu to select and filter AI commands, implemented with [prosemirror-slash-menu-react](https://github.com/emergence-engineering/prosemirror-slash-menu-react)
 - An "Ask AI" tooltip that appears when text is selected
 - A suggestion overlay to show streaming results and accept/reject them
+- A grammar popup to display grammar suggestions with accept, discard, and hint actions
 
 ## How to use?
 
@@ -78,6 +79,51 @@ const Editor: FC = () => {
 - `editorView` — ProseMirror EditorView
 - `editorState` — ProseMirror EditorState
 - `domReference` — optional HTMLElement for Popper positioning (defaults to the current selection node)
+
+## Grammar Popup
+
+The `GrammarPopup` component displays an inline popup for grammar suggestions created by `grammarSuggestPlugin`. It shows the original text with strikethrough, the suggested replacement, and action buttons to accept, discard, or request an explanation.
+
+### Usage
+
+```tsx
+import { grammarSuggestPlugin } from "prosemirror-suggestcat-plugin";
+import { GrammarPopup } from "prosemirror-suggestcat-plugin-react";
+
+// Add grammarSuggestPlugin to your editor plugins
+const state = EditorState.create({
+  plugins: [
+    grammarSuggestPlugin("<YOUR_API_KEY>"),
+    // ...other plugins
+  ],
+});
+
+// Render the component alongside your editor
+<GrammarPopup
+  editorView={editorView}
+  editorState={editorView.state}
+  apiKey="<YOUR_API_KEY>"
+  model="cerebras:gpt-oss-120b" // optional
+  apiEndpoint="/custom"   // optional
+/>
+```
+
+### Grammar Popup Props
+
+- `editorView` — ProseMirror EditorView
+- `editorState` — ProseMirror EditorState
+- `apiKey` — API key used to fetch hint explanations
+- `apiEndpoint` — _(optional)_ custom endpoint for hint requests
+- `model` — _(optional)_ model to use for generating hint explanations
+
+### How it works
+
+When the cursor is inside a grammar decoration, the popup appears with:
+
+- The **original text** (red, strikethrough) and the **suggested replacement** (green)
+- **Accept** (`✓`) — applies the suggestion
+- **Discard** (`✕`) — removes the suggestion without applying
+- **Hint** (`?`) — fetches an AI explanation of why the change is suggested
 
 ### Styles
 

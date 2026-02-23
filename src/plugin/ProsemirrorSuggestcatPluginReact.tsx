@@ -77,8 +77,8 @@ export const ProsemirrorSuggestcatPluginReact: FC<{
   }, [editorView?.state?.selection, window.scrollY]);
 
   const slashMenuDomReference = useMemo(() => {
-    return overlayElement || domReference;
-  }, [domReference, overlayElement, suggestionState]);
+    return overlayElement || domReference || slashMenuPopperRef || undefined;
+  }, [domReference, overlayElement, suggestionState, slashMenuPopperRef]);
   const shouldDisplay = useMemo(() => {
     if (!editorView?.state) return false;
     const slashMenuOpen = SlashMenuKey.getState(editorView?.state)?.open;
